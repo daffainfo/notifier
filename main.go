@@ -2,6 +2,8 @@ package main
 
 import (
 	"bufio"
+	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
@@ -9,7 +11,31 @@ import (
 	"strings"
 )
 
-var apikey = "xxxxx"
+func readapikey() string {
+	dirname, err := os.UserHomeDir()
+	if err != nil {
+		log.Fatalln(err)
+	}
+	data, err := ioutil.ReadFile(dirname + "/.config/notifier/key.txt")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	return string(data)
+}
+
+func showBanner() {
+	fmt.Println(`
+____    ___   ______  ____  _____  ____    ___  ____  
+|    \  /   \ |      Tl    j|     |l    j  /  _]|    \ 
+|  _  YY     Y|      | |  T |   __j |  T  /  [_ |  D  )
+|  |  ||  O  |l_j  l_j |  | |  l_   |  | Y    _]|    / 
+|  |  ||     |  |  |   |  | |   _]  |  | |   [_ |    \ 
+|  |  |l     !  |  |   j  l |  T    j  l |     T|  .  Y
+l__j__j \___/   l__j  |____jl__j   |____jl_____jl__j\_j
+
+Name: Muhammad Daffa
+Version: 0.0.1`)
+}
 
 func curl_line() {
 	s := bufio.NewScanner(os.Stdin)
@@ -24,7 +50,7 @@ func curl_line() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		req.Header.Set("Authorization", "Bearer "+apikey)
+		req.Header.Set("Authorization", "Bearer "+readapikey())
 		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
 		resp, err := http.DefaultClient.Do(req)
@@ -33,9 +59,9 @@ func curl_line() {
 		}
 		defer resp.Body.Close()
 	}
-
 }
 
 func main() {
+	showBanner()
 	curl_line()
 }
