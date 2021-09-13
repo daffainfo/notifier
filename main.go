@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -11,16 +12,27 @@ import (
 	"strings"
 )
 
+type apikey struct {
+	Apikey string `json:"apikey"`
+}
+
 func readapikey() string {
 	dirname, err := os.UserHomeDir()
 	if err != nil {
 		log.Fatalln(err)
 	}
-	data, err := ioutil.ReadFile(dirname + "/.config/notifier/key.txt")
+	data, err := ioutil.ReadFile(dirname + "/.config/notifier/key.json")
 	if err != nil {
 		log.Fatalln(err)
 	}
-	return string(data)
+	var api apikey
+
+	err = json.Unmarshal(data, &api)
+	if err != nil {
+		fmt.Println("error:", err)
+	}
+
+	return api.Apikey
 }
 
 func showBanner() {
